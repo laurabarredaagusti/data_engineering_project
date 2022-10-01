@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>European Soccer</title>
+    <meta name="description" content="European Soccer">
+    <meta name="keywords" content="European Soccer">
+    <style type="text/css">
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0px;
+            padding: 0px;
+            background-color: #8dd590;
+        }
+        .title-img {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .title-img img{
+            width: 400px;
+            border-radius: 3px;
+        }
+        .forms {
+            display: flex;
+            flex-direction: row;
+        }
+        .form {
+            display: flex;
+            flex-direction: column;
+            padding: 3rem;
+        }
+    </style>
+</head>
+
+<body>
+</body>
+    <div class="title-img">
+        <img src="{{url_for('static', filename='title.jpeg')}}"/>
+    </div>
+    <h1>European Soccer</h1>
+    <p>Pon aquí una description</p>
+
+    <div class="forms">
+        <div class="form">
+            <h1>Predict</h1>
+            <form method="get" action="/predict" autocomplete="on" >
+                <label>League Id</label><br/>
+                <input type="text" name="league_id" /><br/>
+                <label>Season</label><br/>
+                <input type="text" name="season" /><br/>
+                <label>Home Team</label><br/>
+                <input type="text" name="home_team_name" /><br/>
+                <label>Away Team</label><br/>
+                <input type="text" name="away_team_name" /><br/>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="form">
+            <h1>Ingestar Datos</h1>
+            <form method="get" action="/predict" autocomplete="on" >
+             
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="form">
+            <h1>Monitorizar</h1>
+            <form method="get" action="/predict" autocomplete="on" >
+                
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="form">
+            <h1>Reentrenar</h1>
+            <form method="get" action="/predict" autocomplete="on" >
+                
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+    </div>
+
+</html>
