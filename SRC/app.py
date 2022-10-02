@@ -3,6 +3,7 @@ from fileinput import filename
 from flask import Flask, request, render_template, url_for
 import os
 import pickle
+import sqlite3
 
 os.chdir(os.path.dirname(__file__))
 
@@ -45,5 +46,25 @@ def predict():
         prediction =  str(prediction[0])
         
         return render_template('predict.html', predict=prediction)
+
+# 1. Devolver la predicción de los nuevos datos enviados mediante argumentos en la llamada
+@app.route('/ingest', methods=['GET'])
+def ingest():
+    country = request.args.get('country', None)
+    season = request.args.get('season', None)
+    home_team_name = request.args.get('home_team_name', None)
+    away_team_name = request.args.get('away_team_name', None)
+    result = request.args.get('result', None)
+
+    params = (country, season, home_team_name, away_team_name, result)
+
+    connection = sqlite3.connect("database.sqlite")
+    crsr = connection.cursor()
+
+    query = '''INSERT INTO prediction VALUES (?,?,?,?,?);'''
+
+    crsr.execute(query, params)
+
+    return 'Data has been added to the database'
 
 app.run()
