@@ -48,8 +48,8 @@
         <div class="form">
             <h1>Predict</h1>
             <form method="get" action="/predict" autocomplete="on" >
-                <label>League Id</label><br/>
-                <input type="text" name="league_id" /><br/>
+                <label>Country</label><br/>
+                <input type="text" name="country" /><br/>
                 <label>Season</label><br/>
                 <input type="text" name="season" /><br/>
                 <label>Home Team</label><br/>
@@ -63,8 +63,24 @@
         <div class="form">
             <h1>Ingestar Datos</h1>
             <form method="get" action="/ingest" autocomplete="on" >
+                <label>Country</label><br/>
+                <input type="text" name="country" /><br/>
+                <label>Season</label><br/>
+                <input type="text" name="season" /><br/>
+                <label>Home Team</label><br/>
+                <input type="text" name="home_team_name" /><br/>
+                <label>Away Team</label><br/>
+                <input type="text" name="away_team_name" /><br/>
+                <label>Result</label><br/>
+                <input type="text" name="result" /><br/>
+                <button type="submit">Submit</button>
+            </form>
+        </div>
+
+        <div class="form">
+            <h1>Ingest by file</h1>
+            <form method="get" action="/ingest" autocomplete="on" >
                 <input type="file" name="new_data" /><br/>
-            
                 <button type="submit">Submit</button>
             </form>
         </div>
