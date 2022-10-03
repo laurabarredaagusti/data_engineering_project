@@ -24,7 +24,8 @@ class UploadFileForm(FlaskForm):
 
 @app.route("/", methods=['GET'])
 def hello():
-    return render_template('index.html') 
+    form = UploadFileForm()
+    return render_template('index.html', form=form) 
 
 # 1. Devolver la predicción de los nuevos datos enviados mediante argumentos en la llamada
 @app.route('/predict', methods=['GET'])
