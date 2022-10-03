@@ -2,6 +2,7 @@ from flask import Flask, redirect, render_template, jsonify
 from flask_wtf import FlaskForm
 from wtforms import FileField, SubmitField
 import os
+from os import environ
 from sklearn import metrics
 import json
 from functions import *
@@ -167,4 +168,5 @@ def print_db():
 
     return jsonify(result)
 
-app.run()
+if __name__ == '__main__':
+  app.run(debug = True, host = '0.0.0.0', port=environ.get("PORT", 5000))
