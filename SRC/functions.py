@@ -5,13 +5,11 @@ import pandas as pd
 from datetime import datetime
 
 def get_arguments(arg):
-    feature = request.args.get(arg, None)
-    return feature
+    return request.args.get(arg, None)
 
 def load_models(model_name):
     path = '../../big_files/' + model_name
-    model = pickle.load(open(path,'rb'))
-    return model
+    return pickle.load(open(path,'rb'))
 
 def encode(model, feature):
     encoded_feature = model.transform(feature)
@@ -29,6 +27,7 @@ def insert_data_sql(params):
     connection = sqlite3.connect(path)
     crsr = connection.cursor()
     crsr.execute(query, params)
+    connection.commit()
     connection.close()
 
 def df_from_sql():
