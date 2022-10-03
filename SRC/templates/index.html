@@ -79,9 +79,10 @@
 
         <div class="form">
             <h1>Ingest by file</h1>
-            <form method="get" action="/ingest" autocomplete="on" >
-                <input type="file" name="new_data" /><br/>
-                <button type="submit">Submit</button>
+            <form method='POST' action="/ingest_by_file" enctype='multipart/form-data'>
+                {{form.hidden_tag()}}
+                {{form.file()}}
+                {{form.submit()}}
             </form>
         </div>
 
