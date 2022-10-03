@@ -1,8 +1,9 @@
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, jsonify
 import os
 from sklearn import metrics
 import json
 from functions import *
+
 
 os.chdir(os.path.dirname(__file__))
 
@@ -53,11 +54,12 @@ def ingest():
     away_team_name = get_arguments('away_team_name')
     result = get_arguments('result')
 
-    params = (country, season, home_team_name, away_team_name, result)
-
-    insert_data_sql(params)
-
-    return 'Data has been added to the database'
+    if country is None or season is None or home_team_name is None or away_team_name is None or result is None:
+        return 'Not enough arguments'
+    else:
+        params = (country, season, home_team_name, away_team_name, result)
+        insert_data_sql(params)
+        return 'Data has been added to the database'
 
 
 # 3. Monitorizar rendimiento
@@ -120,5 +122,22 @@ def retrain():
     result = "New model retrained and saved"
 
     return result
+
+
+# 4 Comprobar función
+@app.route('/print_db', methods=['GET'])
+def print_db():
+
+    connection = sqlite3.connect('../../big_files/database.sqlite')
+    cursor = connection.cursor()
+
+    query = '''
+    SELECT * FROM prediction
+    '''
+
+    result = cursor.execute(query).fetchall()
+    connection.commit()
+
+    return jsonify(result)
 
 app.run()
