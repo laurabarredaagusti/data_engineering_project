@@ -3,6 +3,17 @@ from flask import request
 import sqlite3
 import pandas as pd
 from datetime import datetime
+import os
+from werkzeug.utils import secure_filename
+from flask import Flask
+import json
+
+def app_config():
+    app = Flask(__name__)
+    app.config['DEBUG'] = True
+    app.config['SECRET_KEY'] = 'supersecretkey'
+    app.config['UPLOAD_FOLDER'] = 'static/files'
+    return app
 
 def get_arguments(arg):
     return request.args.get(arg, None)
@@ -26,7 +37,7 @@ def insert_data_sql(params):
     path = '../../big_files/database.sqlite'
     connection = sqlite3.connect(path)
     crsr = connection.cursor()
-    crsr.execute(query, params)
+    crsr.executemany(query, params)
     connection.commit()
     connection.close()
 
@@ -47,3 +58,13 @@ def save_model(model):
     name = 'model_random' + date
     path = '../../big_files/' + name
     pickle.dump(model, open(path,'wb'))
+
+def save_file(form,app):
+    file = form.file.data 
+    path = os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))
+    file.save(path)
+
+def df_from_json(path):
+    with open(path, 'r') as f:
+        data = json.loads(f.read())
+        return pd.json_normalize(data)

@@ -9,14 +9,9 @@ from time import sleep
 from werkzeug.utils import secure_filename
 from wtforms.validators import InputRequired
 
-
 os.chdir(os.path.dirname(__file__))
 
-app = Flask(__name__)
-# app = Flask(__name__, static_folder='static')
-app.config['DEBUG'] = True
-app.config['SECRET_KEY'] = 'supersecretkey'
-app.config['UPLOAD_FOLDER'] = 'static/files'
+app = app_config()
 
 class UploadFileForm(FlaskForm):
     file = FileField("File", validators=[InputRequired()])
@@ -57,31 +52,36 @@ def predict():
         return render_template('predict.html', predict=prediction)
 
 
-# 2. Ingestar nuevos datos
-@app.route('/ingest', methods=['GET'])
-def ingest():
-    country = get_arguments('country')
-    season = get_arguments('season')
-    home_team_name = get_arguments('home_team_name')
-    away_team_name = get_arguments('away_team_name')
-    result = get_arguments('result')
+# # 2. Ingestar nuevos datos
+# @app.route('/ingest', methods=['GET'])
+# def ingest():
+#     country = get_arguments('country')
+#     season = get_arguments('season')
+#     home_team_name = get_arguments('home_team_name')
+#     away_team_name = get_arguments('away_team_name')
+#     result = get_arguments('result')
     
-    if country is None or season is None or home_team_name is None or away_team_name is None or result is None:
-        return 'Not enough arguments'
-    else:
-        params = (country, season, home_team_name, away_team_name, result)
-        insert_data_sql(params)
-        frase2='Data has been added to the database'
-        return  render_template('ingest.html', ingest=frase2)
+#     if country is None or season is None or home_team_name is None or away_team_name is None or result is None:
+#         return 'Not enough arguments'
+#     else:
+#         params = (country, season, home_team_name, away_team_name, result)
+#         insert_data_sql(params)
+#         frase2='Data has been added to the database'
+#         return  render_template('ingest.html', ingest=frase2)
 
 
+# 2. Ingestar nuevos datos
 @app.route('/ingest_by_file', methods=['GET','POST'])
 def ingest_by_file():
     form = UploadFileForm()
     if form.validate_on_submit():
-        file = form.file.data # First grab the file
-        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))) # Then save the file
-        return "File has been uploaded."
+        save_file(form, app)
+        path = 'test_json.json'
+        new_data_df = df_from_json(path)
+        lista_valores = new_data_df.values.tolist()
+        insert_data_sql(lista_valores)
+        return "Data has been added to the database."
+
     return render_template('index.html', form=form)
     
 
