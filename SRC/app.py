@@ -49,18 +49,15 @@ def predict():
 # 2. Ingestar nuevos datos
 @app.route('/ingest', methods=['GET'])
 def ingest():
-    country = get_arguments('country')
-    season = get_arguments('season')
-    home_team_name = get_arguments('home_team_name')
-    away_team_name = get_arguments('away_team_name')
-    result = get_arguments('result')
+    new_data = get_arguments('new_data')
 
-    if country is None or season is None or home_team_name is None or away_team_name is None or result is None:
-        return 'Not enough arguments'
-    else:
-        params = (country, season, home_team_name, away_team_name, result)
-        insert_data_sql(params)
-        return 'Data has been added to the database'
+    # if country is None or season is None or home_team_name is None or away_team_name is None or result is None:
+    #     return 'Not enough arguments'
+    # else:
+    #     params = (country, season, home_team_name, away_team_name, result)
+    #     insert_data_sql(params)
+    #     return 'Data has been added to the database'
+    return 'Data has been added to the database'
 
 
 # 3. Monitorizar rendimiento
@@ -111,7 +108,6 @@ def retrain():
     df['season'] = encode(le_season, df['season'])
     df['home_team_name'] = encode(le_home_team_name, df['home_team_name'])
     df['away_team_name'] = encode(le_away_team_name, df['away_team_name'])
-
 
     X = df.drop('result', axis=1)
     y = df['result']
