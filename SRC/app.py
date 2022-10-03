@@ -1,8 +1,9 @@
-from flask import Flask, request, render_template, jsonify
+from flask import Flask, redirect, render_template, jsonify
 import os
 from sklearn import metrics
 import json
 from functions import *
+from time import sleep
 
 
 os.chdir(os.path.dirname(__file__))
@@ -90,7 +91,7 @@ def monitor():
     accuracy = dict['accuracy_0']
 
     if new_accuracy < accuracy:
-        return 'The accuracy is not improving, the model needs to be retrained'
+        return redirect("/retrain")
     else:
         return 'The model does not need to be retrained'
 
