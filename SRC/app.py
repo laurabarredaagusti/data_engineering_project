@@ -13,7 +13,7 @@ app.config['DEBUG'] = True
 
 @app.route("/", methods=['GET'])
 def hello():
-    return render_template('index.html')
+    return render_template('index.html') 
 
 
 # 1. Devolver la predicción de los nuevos datos enviados mediante argumentos en la llamada
@@ -49,15 +49,20 @@ def predict():
 # 2. Ingestar nuevos datos
 @app.route('/ingest', methods=['GET'])
 def ingest():
-    new_data = get_arguments('new_data')
+    country = get_arguments('country')
+    season = get_arguments('season')
+    home_team_name = get_arguments('home_team_name')
+    away_team_name = get_arguments('away_team_name')
+    result = get_arguments('result')
 
-    # if country is None or season is None or home_team_name is None or away_team_name is None or result is None:
-    #     return 'Not enough arguments'
-    # else:
-    #     params = (country, season, home_team_name, away_team_name, result)
-    #     insert_data_sql(params)
-    #     return 'Data has been added to the database'
-    return 'Data has been added to the database'
+    if country is None or season is None or home_team_name is None or away_team_name is None or result is None:
+        frase1='Not enough arguments'
+        return render_template('ingest.html', ingest=frase1)
+    else:
+        params = (country, season, home_team_name, away_team_name, result)
+        insert_data_sql(params)
+        frase2='Data has been added to the database'
+        return  render_template('ingest.html', ingest=frase2)
 
 
 # 3. Monitorizar rendimiento
@@ -88,9 +93,11 @@ def monitor():
     accuracy = dict['accuracy_0']
 
     if new_accuracy < accuracy:
-        return redirect("/retrain")
+        frase1=redirect("/retrain")
+        return render_template('monitor.html', monitor=frase1)
     else:
-        return 'The model does not need to be retrained'
+        frase2='The model does not need to be retrained'
+        return  render_template('monitor.html', monitor=frase2)
 
 
 # 4. Reentrenar modelo
@@ -109,6 +116,7 @@ def retrain():
     df['home_team_name'] = encode(le_home_team_name, df['home_team_name'])
     df['away_team_name'] = encode(le_away_team_name, df['away_team_name'])
 
+
     X = df.drop('result', axis=1)
     y = df['result']
 
@@ -118,14 +126,14 @@ def retrain():
 
     result = "New model retrained and saved"
 
-    return result
+    return render_template('retrain.html', retrain=result)
 
 
 # 4 Comprobar función
 @app.route('/print_db', methods=['GET'])
 def print_db():
 
-    connection = sqlite3.connect('../../big_files/database.sqlite')
+    connection = sqlite3.connect('database.sqlite')
     cursor = connection.cursor()
 
     query = '''
@@ -134,6 +142,8 @@ def print_db():
 
     result = cursor.execute(query).fetchall()
     connection.commit()
+
+    
 
     return jsonify(result)
 
