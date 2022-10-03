@@ -24,7 +24,7 @@ class UploadFileForm(FlaskForm):
 
 @app.route("/", methods=['GET'])
 def hello():
-    return render_template('index.html')
+    return render_template('index.html') 
 
 # 1. Devolver la predicción de los nuevos datos enviados mediante argumentos en la llamada
 @app.route('/predict', methods=['GET'])
@@ -70,7 +70,8 @@ def ingest():
     else:
         params = (country, season, home_team_name, away_team_name, result)
         insert_data_sql(params)
-        return 'Data has been added to the database'
+        frase2='Data has been added to the database'
+        return  render_template('ingest.html', ingest=frase2)
 
 
 @app.route('/ingest_by_file', methods=['GET','POST'])
@@ -81,6 +82,7 @@ def ingest_by_file():
         file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))) # Then save the file
         return "File has been uploaded."
     return render_template('index.html', form=form)
+    
 
 # 3. Monitorizar rendimiento
 @app.route('/monitor', methods=['GET'])
@@ -110,9 +112,11 @@ def monitor():
     accuracy = dict['accuracy_0']
 
     if new_accuracy < accuracy:
-        return redirect("/retrain")
+        frase1=redirect("/retrain")
+        return render_template('monitor.html', monitor=frase1)
     else:
-        return 'The model does not need to be retrained'
+        frase2='The model does not need to be retrained'
+        return  render_template('monitor.html', monitor=frase2)
 
 
 # 4. Reentrenar modelo
@@ -131,6 +135,7 @@ def retrain():
     df['home_team_name'] = encode(le_home_team_name, df['home_team_name'])
     df['away_team_name'] = encode(le_away_team_name, df['away_team_name'])
 
+
     X = df.drop('result', axis=1)
     y = df['result']
 
@@ -140,14 +145,14 @@ def retrain():
 
     result = "New model retrained and saved"
 
-    return result
+    return render_template('retrain.html', retrain=result)
 
 
 # 4 Comprobar función
 @app.route('/print_db', methods=['GET'])
 def print_db():
 
-    connection = sqlite3.connect('../../big_files/database.sqlite')
+    connection = sqlite3.connect('database.sqlite')
     cursor = connection.cursor()
 
     query = '''
@@ -156,6 +161,8 @@ def print_db():
 
     result = cursor.execute(query).fetchall()
     connection.commit()
+
+    
 
     return jsonify(result)
 

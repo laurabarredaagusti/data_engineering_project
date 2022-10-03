@@ -12,8 +12,8 @@
             align-items: center;
             margin: 0px;
             padding: 0px;
-            background-color: #8dd590;
-        }
+            background-color: #8dd590; 
+        } 
         .title-img {
             display: flex;
             justify-content: center;
@@ -42,7 +42,7 @@
         <img src="{{url_for('static', filename='title.jpeg')}}"/>
     </div>
     <h1>European Soccer</h1>
-    <p>Pon aquí una description</p>
+   
 
     <div class="forms">
         <div class="form">
@@ -73,6 +73,7 @@
                 <input type="text" name="away_team_name" /><br/>
                 <label>Result</label><br/>
                 <input type="text" name="result" /><br/>
+                
                 <button type="submit">Submit</button>
             </form>
         </div>
@@ -88,7 +89,7 @@
 
         <div class="form">
             <h1>Monitorizar</h1>
-            <form method="get" action="/predict" autocomplete="on" >
+            <form method="get" action="/monitor" autocomplete="on" >
                 
                 <button type="submit">Submit</button>
             </form>
@@ -96,11 +97,13 @@
 
         <div class="form">
             <h1>Reentrenar</h1>
-            <form method="get" action="/predict" autocomplete="on" >
+            <form method="get" action="/retrain" autocomplete="on" >
                 
                 <button type="submit">Submit</button>
             </form>
         </div>
+
+        
     </div>
 
 </html>
