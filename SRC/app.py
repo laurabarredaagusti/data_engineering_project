@@ -1,20 +1,30 @@
 from flask import Flask, redirect, render_template, jsonify
+from flask_wtf import FlaskForm
+from wtforms import FileField, SubmitField
 import os
 from sklearn import metrics
 import json
 from functions import *
 from time import sleep
+from werkzeug.utils import secure_filename
+from wtforms.validators import InputRequired
 
 
 os.chdir(os.path.dirname(__file__))
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__)
+# app = Flask(__name__, static_folder='static')
 app.config['DEBUG'] = True
+app.config['SECRET_KEY'] = 'supersecretkey'
+app.config['UPLOAD_FOLDER'] = 'static/files'
+
+class UploadFileForm(FlaskForm):
+    file = FileField("File", validators=[InputRequired()])
+    submit = SubmitField("Upload File")
 
 @app.route("/", methods=['GET'])
 def hello():
     return render_template('index.html') 
-
 
 # 1. Devolver la predicción de los nuevos datos enviados mediante argumentos en la llamada
 @app.route('/predict', methods=['GET'])
@@ -54,16 +64,25 @@ def ingest():
     home_team_name = get_arguments('home_team_name')
     away_team_name = get_arguments('away_team_name')
     result = get_arguments('result')
-
+    
     if country is None or season is None or home_team_name is None or away_team_name is None or result is None:
-        frase1='Not enough arguments'
-        return render_template('ingest.html', ingest=frase1)
+        return 'Not enough arguments'
     else:
         params = (country, season, home_team_name, away_team_name, result)
         insert_data_sql(params)
         frase2='Data has been added to the database'
         return  render_template('ingest.html', ingest=frase2)
 
+
+@app.route('/ingest_by_file', methods=['GET','POST'])
+def ingest_by_file():
+    form = UploadFileForm()
+    if form.validate_on_submit():
+        file = form.file.data # First grab the file
+        file.save(os.path.join(os.path.abspath(os.path.dirname(__file__)),app.config['UPLOAD_FOLDER'],secure_filename(file.filename))) # Then save the file
+        return "File has been uploaded."
+    return render_template('index.html', form=form)
+    
 
 # 3. Monitorizar rendimiento
 @app.route('/monitor', methods=['GET'])

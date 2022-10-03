@@ -79,6 +79,15 @@
         </div>
 
         <div class="form">
+            <h1>Ingest by file</h1>
+            <form method='POST' action="/ingest_by_file" enctype='multipart/form-data'>
+                {{form.hidden_tag()}}
+                {{form.file()}}
+                {{form.submit()}}
+            </form>
+        </div>
+
+        <div class="form">
             <h1>Monitorizar</h1>
             <form method="get" action="/monitor" autocomplete="on" >
                 
