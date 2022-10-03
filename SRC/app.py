@@ -1,13 +1,7 @@
-from crypt import methods
-from fileinput import filename
-from flask import Flask, request, render_template, url_for
+from flask import Flask, request, render_template
 import os
-import pickle
-import sqlite3
-import pandas as pd
 from sklearn import metrics
 import json
-from datetime import datetime
 from functions import *
 
 os.chdir(os.path.dirname(__file__))
@@ -23,7 +17,7 @@ def hello():
 # 1. Devolver la predicción de los nuevos datos enviados mediante argumentos en la llamada
 @app.route('/predict', methods=['GET'])
 def predict():
-    model = pickle.load(open('../../big_files/model_random','rb'))
+    model = load_models('model_random')
 
     country = get_arguments('country')
     season = get_arguments('season')
@@ -38,10 +32,10 @@ def predict():
         le_home_team_name = load_models('le_home_team_name')
         le_away_team_name = load_models('le_away_team_name')
 
-        country = encode(le_country, country)
-        season = encode(le_season, season)
-        home_team_name = encode(le_home_team_name, home_team_name)
-        away_team_name = encode(le_away_team_name, away_team_name)
+        country = encode(le_country, [country])
+        season = encode(le_season, [season])
+        home_team_name = encode(le_home_team_name, [home_team_name])
+        away_team_name = encode(le_away_team_name, [away_team_name])
 
         feature_list = [country, season, home_team_name, away_team_name]
 
@@ -53,22 +47,15 @@ def predict():
 # 2. Ingestar nuevos datos
 @app.route('/ingest', methods=['GET'])
 def ingest():
-    country = request.args.get('country', None)
-    season = request.args.get('season', None)
-    home_team_name = request.args.get('home_team_name', None)
-    away_team_name = request.args.get('away_team_name', None)
-    result = request.args.get('result', None)
+    country = get_arguments('country')
+    season = get_arguments('season')
+    home_team_name = get_arguments('home_team_name')
+    away_team_name = get_arguments('away_team_name')
+    result = get_arguments('result')
 
     params = (country, season, home_team_name, away_team_name, result)
 
-    connection = sqlite3.connect("database.sqlite")
-    crsr = connection.cursor()
-
-    query = '''INSERT INTO prediction VALUES (?,?,?,?,?);'''
-
-    crsr.execute(query, params)
-
-    connection.close()
+    insert_data_sql(params)
 
     return 'Data has been added to the database'
 
@@ -76,29 +63,18 @@ def ingest():
 # 3. Monitorizar rendimiento
 @app.route('/monitor', methods=['GET'])
 def monitor():
-    model = pickle.load(open('../../big_files/model_random','rb'))
-    le_country = pickle.load(open('../../big_files/le_country','rb'))
-    le_season = pickle.load(open('../../big_files/le_season','rb'))
-    le_home_team_name = pickle.load(open('../../big_files/le_home_team_name','rb'))
-    le_away_team_name = pickle.load(open('../../big_files/le_away_team_name','rb'))
+    model = load_models('model_random')
+    le_country = load_models('le_country')
+    le_season = load_models('le_season')
+    le_home_team_name = load_models('le_home_team_name')
+    le_away_team_name = load_models('le_away_team_name')
 
-    connection = sqlite3.connect("../../big_files/database.sqlite")
-    crsr = connection.cursor()
+    df = df_from_sql()
 
-    query = '''SELECT * FROM prediction'''
-
-    crsr.execute(query)
-    ans = crsr.fetchall()
-    names = [description[0] for description in crsr.description]
-
-    df = pd.DataFrame(ans,columns=names)
-
-    df['country'] = le_country.transform(df['country'])
-    df['season'] = le_season.transform(df['season'])
-    df['home_team_name'] = le_home_team_name.transform(df['home_team_name'])
-    df['away_team_name'] = le_away_team_name.transform(df['away_team_name'])
-
-    connection.close()
+    df['country'] = encode(le_country, df['country'])
+    df['season'] = encode(le_season, df['season'])
+    df['home_team_name'] = encode(le_home_team_name, df['home_team_name'])
+    df['away_team_name'] = encode(le_away_team_name, df['away_team_name'])
 
     X = df.drop('result', axis=1)
     y = df['result']
@@ -120,41 +96,28 @@ def monitor():
 # 4. Reentrenar modelo
 @app.route('/retrain', methods=['GET'])
 def retrain():
-    model = pickle.load(open('../../big_files/model_random','rb'))
-    le_country = pickle.load(open('../../big_files/le_country','rb'))
-    le_season = pickle.load(open('../../big_files/le_season','rb'))
-    le_home_team_name = pickle.load(open('../../big_files/le_home_team_name','rb'))
-    le_away_team_name = pickle.load(open('../../big_files/le_away_team_name','rb'))
+    model = load_models('model_random')
+    le_country = load_models('le_country')
+    le_season = load_models('le_season')
+    le_home_team_name = load_models('le_home_team_name')
+    le_away_team_name = load_models('le_away_team_name')
 
-    connection = sqlite3.connect("../../big_files/database.sqlite")
-    crsr = connection.cursor()    
+    df = df_from_sql()
 
-    query = '''SELECT * FROM prediction'''
+    df['country'] = encode(le_country, df['country'])
+    df['season'] = encode(le_season, df['season'])
+    df['home_team_name'] = encode(le_home_team_name, df['home_team_name'])
+    df['away_team_name'] = encode(le_away_team_name, df['away_team_name'])
 
-    crsr.execute(query)
-    ans = crsr.fetchall()
-    names = [description[0] for description in crsr.description]
-
-    df = pd.DataFrame(ans,columns=names)
-
-    df['country'] = le_country.transform(df['country'])
-    df['season'] = le_season.transform(df['season'])
-    df['home_team_name'] = le_home_team_name.transform(df['home_team_name'])
-    df['away_team_name'] = le_away_team_name.transform(df['away_team_name'])
-
-    connection.close()
 
     X = df.drop('result', axis=1)
     y = df['result']
 
     model.fit(X,y)
 
-    date = str(datetime.today().strftime('%y%m%d%H%M%S'))
-    name = 'model_random' + date
-    path = '../../big_files/' + name
-    pickle.dump(model, open(path,'wb'))
+    save_model(model)
 
-    result = "New model retrained and saved as " + name
+    result = "New model retrained and saved"
 
     return result
 
