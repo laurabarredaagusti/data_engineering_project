@@ -77,7 +77,7 @@ def ingest_by_file():
     form = UploadFileForm()
     if form.validate_on_submit():
         save_file(form, app)
-        path = 'test_json.json'
+        path = '../static/files/test_json.json'
         new_data_df = df_from_json(path)
         lista_valores = new_data_df.values.tolist()
         insert_data_sql(lista_valores)
@@ -109,7 +109,7 @@ def monitor():
 
     new_accuracy = metrics.accuracy_score(y, prediction)
 
-    f = open('static/files/monitoring/accuracy_monitor.json')
+    f = open('static/monitoring/accuracy_monitor.json')
     dict = json.load(f)
     accuracy = dict['accuracy_0']
 
@@ -154,7 +154,7 @@ def retrain():
 @app.route('/print_db', methods=['GET'])
 def print_db():
 
-    connection = sqlite3.connect('database.sqlite')
+    connection = sqlite3.connect('../../big_files/database.sqlite')
     cursor = connection.cursor()
 
     query = '''
