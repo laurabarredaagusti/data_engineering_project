@@ -2,13 +2,13 @@ from flask import Flask, redirect, render_template, jsonify
 from flask_wtf import FlaskForm
 from wtforms import FileField, SubmitField
 import os
-from os import environ
 from sklearn import metrics
 import json
 from functions import *
 from time import sleep
 from werkzeug.utils import secure_filename
 from wtforms.validators import InputRequired
+from os import environ
 
 os.chdir(os.path.dirname(__file__))
 
@@ -150,7 +150,7 @@ def retrain():
     return render_template('retrain.html', retrain=result)
 
 
-# 4 Comprobar función
+# 4 Comprobar función
 @app.route('/print_db', methods=['GET'])
 def print_db():
 
