@@ -78,7 +78,8 @@ def monitor():
     le_home_team_name = load_models('le_home_team_name')
     le_away_team_name = load_models('le_away_team_name')
 
-    df = df_from_sql()
+    path = 'static/files/new_data.json'
+    df = df_from_json(path)
 
     df['country'] = encode(le_country, df['country'])
     df['season'] = encode(le_season, df['season'])

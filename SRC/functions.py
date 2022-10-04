@@ -7,6 +7,7 @@ import os
 from werkzeug.utils import secure_filename
 from flask import Flask
 import json
+import pymysql
 
 def app_config():
     app = Flask(__name__)
@@ -42,15 +43,24 @@ def insert_data_sql(params):
     connection.close()
 
 def df_from_sql():
+
+    username = "admin"
+    password = "maestra1"
+    host = "database.ce3qv1igpszx.us-east-1.rds.amazonaws.com" 
+
+    db = pymysql.connect(host = host,
+                     user = username,
+                     password = password,
+                     cursorclass = pymysql.cursors.DictCursor)
+
+    crsr = db.cursor()
+
     query = '''SELECT * FROM prediction'''
-    path = '../../big_files/database.sqlite'
-    connection = sqlite3.connect(path)
-    crsr = connection.cursor()
     crsr.execute(query)
     ans = crsr.fetchall()
     names = [description[0] for description in crsr.description]
     df = pd.DataFrame(ans,columns=names)
-    connection.close()
+    db.close()
     return df
 
 def save_model(model):
