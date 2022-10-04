@@ -54,8 +54,7 @@ def df_from_sql():
     return df
 
 def save_model(model):
-    date = str(datetime.today().strftime('%y%m%d%H%M%S'))
-    name = 'model_random' + date
+    name = 'model'
     path = '../../big_files/' + name
     pickle.dump(model, open(path,'wb'))
 

@@ -26,7 +26,7 @@ def hello():
 # 1. Devolver la predicción de los nuevos datos enviados mediante argumentos en la llamada
 @app.route('/predict', methods=['GET'])
 def predict():
-    model = load_models('model_random')
+    model = load_models('model')
 
     country = get_arguments('country')
     season = get_arguments('season')
@@ -72,7 +72,7 @@ def ingest_by_file():
 @app.route('/monitor', methods=['GET'])
 def monitor():
     sleep(2)
-    model = load_models('model_random')
+    model = load_models('model')
     le_country = load_models('le_country')
     le_season = load_models('le_season')
     le_home_team_name = load_models('le_home_team_name')
@@ -106,7 +106,7 @@ def monitor():
 # 4. Reentrenar modelo
 @app.route('/retrain', methods=['GET'])
 def retrain():
-    model = load_models('model_random')
+    model = load_models('model')
     le_country = load_models('le_country')
     le_season = load_models('le_season')
     le_home_team_name = load_models('le_home_team_name')
@@ -124,12 +124,21 @@ def retrain():
     y = df['result']
 
     model.fit(X,y)
+    
+    prediction = model.predict(X)
 
-    save_model(model)
+    new_accuracy = metrics.accuracy_score(y, prediction)
 
-    result = "New model retrained and saved"
+    f = open('static/monitoring/accuracy_monitor.json')
+    dict = json.load(f)
+    accuracy = dict['accuracy_0']
 
-    return render_template('retrain.html', retrain=result)
+    if new_accuracy < accuracy:
+        return "The accuracy has not improved"
+    else:
+        save_model(model)
+        frase2='The new model has been saved with an accuracy of ' + str(new_accuracy)
+        return  render_template('retrain.html', monitor=frase2)
 
 
 # 4 Comprobar función
