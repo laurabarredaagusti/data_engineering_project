@@ -34,7 +34,7 @@ def predict():
     away_team_name = get_arguments('away_team_name')
 
     if country is None or season is None or home_team_name is None or away_team_name is None:
-        return 'Not enough arguments'
+        return render_template('predict_home.html')
     else:
         le_country = load_models('le_country')
         le_season = load_models('le_season')
@@ -53,42 +53,25 @@ def predict():
         return render_template('predict.html', predict=prediction)
 
 
-# # 2. Ingestar nuevos datos
-# @app.route('/ingest', methods=['GET'])
-# def ingest():
-#     country = get_arguments('country')
-#     season = get_arguments('season')
-#     home_team_name = get_arguments('home_team_name')
-#     away_team_name = get_arguments('away_team_name')
-#     result = get_arguments('result')
-    
-#     if country is None or season is None or home_team_name is None or away_team_name is None or result is None:
-#         return 'Not enough arguments'
-#     else:
-#         params = (country, season, home_team_name, away_team_name, result)
-#         insert_data_sql(params)
-#         frase2='Data has been added to the database'
-#         return  render_template('ingest.html', ingest=frase2)
-
-
 # 2. Ingestar nuevos datos
-@app.route('/ingest_by_file', methods=['GET','POST'])
+@app.route('/ingest', methods=['GET','POST'])
 def ingest_by_file():
     form = UploadFileForm()
     if form.validate_on_submit():
         save_file(form, app)
-        path = '../static/files/test_json.json'
+        path = 'static/files/new_data.json'
         new_data_df = df_from_json(path)
         lista_valores = new_data_df.values.tolist()
         insert_data_sql(lista_valores)
-        return "Data has been added to the database."
+        return redirect("/monitor")
 
-    return render_template('index.html', form=form)
+    return render_template('ingest_home.html', form=form)
     
 
 # 3. Monitorizar rendimiento
 @app.route('/monitor', methods=['GET'])
 def monitor():
+    sleep(2)
     model = load_models('model_random')
     le_country = load_models('le_country')
     le_season = load_models('le_season')
@@ -114,8 +97,7 @@ def monitor():
     accuracy = dict['accuracy_0']
 
     if new_accuracy < accuracy:
-        frase1=redirect("/retrain")
-        return render_template('monitor.html', monitor=frase1)
+        return redirect("/retrain")
     else:
         frase2='The model does not need to be retrained'
         return  render_template('monitor.html', monitor=frase2)
@@ -164,9 +146,8 @@ def print_db():
     result = cursor.execute(query).fetchall()
     connection.commit()
 
-    
-
     return jsonify(result)
+
 
 if __name__ == '__main__':
   app.run(debug = True, host = '0.0.0.0', port=environ.get("PORT", 5000))

@@ -60,31 +60,6 @@
             </form>
         </div>
 
-        <div class="form">
-            <h1>Ingest</h1>
-            <form method='POST' action="/ingest" enctype='multipart/form-data'>
-                {{form.hidden_tag()}}
-                {{form.file()}}
-                {{form.submit()}}
-            </form>
-        </div>
-
-        <div class="form">
-            <h1>Monitorizar</h1>
-            <form method="get" action="/monitor" autocomplete="on" >
-                
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-
-        <div class="form">
-            <h1>Reentrenar</h1>
-            <form method="get" action="/retrain" autocomplete="on" >
-                
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-
         
     </div>
 

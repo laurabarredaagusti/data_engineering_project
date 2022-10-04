@@ -45,20 +45,6 @@
    
 
     <div class="forms">
-        <div class="form">
-            <h1>Predict</h1>
-            <form method="get" action="/predict" autocomplete="on" >
-                <label>Country</label><br/>
-                <input type="text" name="country" /><br/>
-                <label>Season</label><br/>
-                <input type="text" name="season" /><br/>
-                <label>Home Team</label><br/>
-                <input type="text" name="home_team_name" /><br/>
-                <label>Away Team</label><br/>
-                <input type="text" name="away_team_name" /><br/>
-                <button type="submit">Submit</button>
-            </form>
-        </div>
 
         <div class="form">
             <h1>Ingest</h1>
@@ -68,23 +54,6 @@
                 {{form.submit()}}
             </form>
         </div>
-
-        <div class="form">
-            <h1>Monitorizar</h1>
-            <form method="get" action="/monitor" autocomplete="on" >
-                
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-
-        <div class="form">
-            <h1>Reentrenar</h1>
-            <form method="get" action="/retrain" autocomplete="on" >
-                
-                <button type="submit">Submit</button>
-            </form>
-        </div>
-
         
     </div>
 
