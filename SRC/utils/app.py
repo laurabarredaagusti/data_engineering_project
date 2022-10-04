@@ -109,7 +109,7 @@ def monitor():
 
     new_accuracy = metrics.accuracy_score(y, prediction)
 
-    f = open('accuracy_monitor.json')
+    f = open('static/files/monitoring/accuracy_monitor.json')
     dict = json.load(f)
     accuracy = dict['accuracy_0']
 
