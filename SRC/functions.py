@@ -34,13 +34,27 @@ def get_prediction(model, feature_list):
     return prediction
 
 def insert_data_sql(params):
-    query = '''INSERT INTO prediction VALUES (?,?,?,?,?);'''
-    path = '../../big_files/database.sqlite'
-    connection = sqlite3.connect(path)
-    crsr = connection.cursor()
+    username = "admin"
+    password = "maestra1"
+    host = "database.ce3qv1igpszx.us-east-1.rds.amazonaws.com" 
+
+    db = pymysql.connect(host = host,
+                     user = username,
+                     password = password,
+                     cursorclass = pymysql.cursors.DictCursor)
+
+    crsr = db.cursor()
+    use_db = '''USE databasefutbol'''
+    crsr.execute(use_db)
+
+    sql = '''SELECT * FROM prediccion'''
+    crsr.execute(sql)
+    result = crsr.fetchall()
+
+    query = '''INSERT INTO prediccion VALUES (%s,%s,%s,%s,%s);'''
     crsr.executemany(query, params)
-    connection.commit()
-    connection.close()
+    db.commit()
+    db.close()
 
 def df_from_sql():
 
@@ -54,8 +68,15 @@ def df_from_sql():
                      cursorclass = pymysql.cursors.DictCursor)
 
     crsr = db.cursor()
+    use_db = '''USE databasefutbol'''
+    crsr.execute(use_db)
 
-    query = '''SELECT * FROM prediction'''
+    crsr = db.cursor()
+    crsr.connection.commit()
+    use_db = '''USE prediccion'''
+    crsr.execute(use_db)
+
+    query = '''SELECT * FROM prediccion'''
     crsr.execute(query)
     ans = crsr.fetchall()
     names = [description[0] for description in crsr.description]
