@@ -71,11 +71,6 @@ def df_from_sql():
     use_db = '''USE databasefutbol'''
     crsr.execute(use_db)
 
-    crsr = db.cursor()
-    crsr.connection.commit()
-    use_db = '''USE prediccion'''
-    crsr.execute(use_db)
-
     query = '''SELECT * FROM prediccion'''
     crsr.execute(query)
     ans = crsr.fetchall()
