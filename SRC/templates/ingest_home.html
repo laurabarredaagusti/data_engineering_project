@@ -1,0 +1,60 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>European Soccer</title>
+    <meta name="description" content="European Soccer">
+    <meta name="keywords" content="European Soccer">
+    <style type="text/css">
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0px;
+            padding: 0px;
+            background-color: #8dd590; 
+        } 
+        .title-img {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .title-img img{
+            width: 400px;
+            border-radius: 3px;
+        }
+        .forms {
+            display: flex;
+            flex-direction: row;
+        }
+        .form {
+            display: flex;
+            flex-direction: column;
+            padding: 3rem;
+        }
+    </style>
+</head>
+
+<body>
+</body>
+    <div class="title-img">
+        <img src="{{url_for('static', filename='images/title.jpeg')}}"/>
+    </div>
+    <h1>European Soccer</h1>
+   
+
+    <div class="forms">
+
+        <div class="form">
+            <h1>Ingest</h1>
+            <form method='POST' action="/ingest" enctype='multipart/form-data'>
+                {{form.hidden_tag()}}
+                {{form.file()}}
+                {{form.submit()}}
+            </form>
+        </div>
+        
+    </div>
+
+</html>

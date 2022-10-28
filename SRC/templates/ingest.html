@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>European Soccer</title>
+    <meta name="description" content="European Soccer">
+    <meta name="keywords" content="European Soccer">
+    <style type="text/css">
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 0px;
+            padding: 0px;
+            background-color: #8dd590;
+        }
+        .title-img {
+            display: flex;
+            justify-content: center;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+        .title-img img{
+            width: 400px;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+
+<body>
+</body>
+<div class="title-img">
+    <img src="{{url_for('static', filename='images/title.jpeg')}}"/>
+</div>
+<h3>Data has been added to the database</h3>
+<h3>Model will be monitored with the new data</h3>
+<div>{{ingest}}</div>
+    <a href="/">Go Back</a>
+</html>
